@@ -6,4 +6,4 @@
 - 支持监听设备的 `连接`、`断开`、`重签`、`确认`、笔的 `抬起`、`放下`、`移动` 等事件
 - 支持获取事件的 `X坐标`、`Y坐标`、`Z按压力度` 的原始数据和归一化数据
 
-在线查看 Demo: [https://esp370u.sherluok.cn](https://esp370u.sherluok.cn)
+示例: [https://esp370u.sherluok.cn](https://esp370u.sherluok.cn)
