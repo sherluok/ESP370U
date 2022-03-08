@@ -1,0 +1,39 @@
+{
+  "name": "esp370u",
+  "version": "0.0.1",
+  "description": "Javascript library for Hanvon ESP370U E-signature display based on WebHID API",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.iife.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "watch": "rollup --config rollup.config.js --watch",
+    "build": "rollup --config rollup.config.js"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^8.3.0",
+    "@types/w3c-web-hid": "^1.0.2",
+    "rollup": "^2.70.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "typescript": "^4.6.2"
+  },
+  "author": "sherluok",
+  "license": "MIT",
+  "keywords": [
+    "bitmap",
+    "nodejs",
+    "dom",
+    "canvas"
+  ],
+  "homepage": "https://github.com/sherluok/esp370u#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sherluok/esp370u.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sherluok/esp370u/issues"
+  },
+  "files": [
+    "dist"
+  ]
+}

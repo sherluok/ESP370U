@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP370U Demo</title>
+  <style>
+    .device {
+      max-width: max-content;
+      max-height: max-content;
+      background: #333;
+      border-radius: 32px;
+      padding: 150px 60px 400px 60px;
+      /* box-shadow: inset 0 60px 36px rgba(0,0,0,.25); */
+    }
+
+    #canvas {
+      width: 400px;
+      height: 200px;
+      
+      border-radius: 6px;
+      border-color: #111;
+      border-style: solid;
+      border-width: 20px 50px 20px 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="device">
+    <canvas id="canvas">您的浏览器不支持 Canvas，请联系客服升级。</canvas>
+  </div>
+  <script src="../dist/index.iife.js"></script>
+  <script src="./index.js"></script>
+</body>
+</html>
