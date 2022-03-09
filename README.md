@@ -38,8 +38,6 @@ or drictly using it without module system by adding the self excute script [inde
 
 ## Examples
 
-See online demo [https://sherluok.github.io/esp370u](https://sherluok.github.io/ESP370U/) or code at [./docs/index.html](./docs/index.html)
-
 To get started quickly, you can use [emulate()](#emulate):
 
 ```ts
@@ -55,6 +53,8 @@ const destroyEmulator = emulate(canvasElement, {
   },
 });
 ```
+
+See online demo [https://sherluok.github.io/ESP370U](https://sherluok.github.io/ESP370U/) or code at [./docs/index.html](./docs/index.html)
 
 ## Commands
 
