@@ -36,6 +36,27 @@ or drictly using it without module system by adding the self excute script [inde
 </html>
 ```
 
+## Examples
+
+- Link: https://sherluok.github.io/ESP370U/
+- Code: ./docs/index.html
+
+To get started quickly, you can use [emulate()](#emulate):
+
+```ts
+import { emulate } from 'esp370u';
+
+const destroyEmulator = emulate(canvasElement, {
+  unsupportedWebHIDAPI: ['Your browser does not support', 'the WebHID API'],
+  unconnectedDevice: ['Your device is not connected yet', 'Click me to connect ESP370U'],
+  onConfirm: (blob) => {
+    destroyEmulator(); // Optional if you want continuous signs.
+    const previewURL = URL.createObjectURL(blob);
+    window.open(previewURL);
+  },
+});
+```
+
 ## Commands
 
 ### `send()`
