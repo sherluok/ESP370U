@@ -6,31 +6,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ESP370U Demo</title>
   <style>
+    body {
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: content-box;
+      background: #ddd;
+    }
     .device {
       max-width: max-content;
       max-height: max-content;
       background: #333;
       border-radius: 32px;
-      padding: 150px 60px 400px 60px;
-      /* box-shadow: inset 0 60px 36px rgba(0,0,0,.25); */
+      padding: 150px 55px 330px 55px;
     }
-
-    #canvas {
-      width: 400px;
-      height: 200px;
-      
+    .display {
       border-radius: 6px;
       border-color: #111;
       border-style: solid;
-      border-width: 20px 50px 20px 50px;
+      border-width: 15px 40px 15px 40px;
+    }
+    #canvas {
+      width: 330px;
+      height: 165px;
+      display: block;
     }
   </style>
 </head>
 <body>
   <div class="device">
-    <canvas id="canvas">您的浏览器不支持 Canvas，请联系客服升级。</canvas>
+    <div class="display">
+      <canvas id="canvas">您的浏览器不支持 Canvas，请联系客服升级。</canvas>
+    </div>
   </div>
-  <script src="../dist/index.iife.js"></script>
+  <script src="./index.iife.js"></script>
   <script src="./index.js"></script>
 </body>
 </html>

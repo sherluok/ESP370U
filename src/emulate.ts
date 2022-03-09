@@ -1,72 +1,65 @@
 import { ESP370U } from './ESP370U';
+import { activeRatioY, displayResolution, productId, vendorId } from './specifications';
 
+/** Simulate HIDDeviceFilter rule */
+function withFilter(filter: HIDDeviceFilter) {
+  return (device: HIDDevice) => {
+    if (filter.vendorId && filter.vendorId !== device.vendorId) return false;
+    if (filter.productId && filter.productId !== device.productId) return false;
+    return true;
+  };
+}
+
+/** Resolve util device permission granted by user */
+async function makesureDevice(
+  filter: HIDDeviceFilter,
+  suspense: (onUserGesture: (teardown: any) => void) => void,
+) {
+  let device;
+  while (!device) {
+    const devices = await navigator.hid.getDevices();
+    device = devices.find(withFilter(filter));
+    if (!device) {
+      const teardown = await new Promise(suspense);
+      if (typeof teardown === 'function') await teardown();
+      [device] = await navigator.hid.requestDevice({ filters: [filter] });
+    }
+  }
+  return device;
+}
+
+/** Create canvas that will not be adding into DOM nodes */
+function createOffscreenCanvas(width: number, height: number) {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d')!;
+  canvas.width = width;
+  canvas.height = height;
+  return [canvas, context] as const;
+}
+
+/** Magic of rendering clear line  */
 function x(value: number) {
   return Math.ceil(value) - .5;
 }
 
+/** Magic of rendering clear line  */
 function y(value: number) {
   return Math.ceil(value) - .5;
 }
 
-const {
-  MAX_X,
-  MAX_Y,
-  MIN_VALID_Y,
-  MAX_VALID_Y,
-} = ESP370U;
-
-function clearESP370U<T>(ctx: CanvasRenderingContext2D, then: (width: number, height: number) => T) {
-  const { width, height } = ctx.canvas;
-  ctx.fillStyle = 'rgb(79, 101, 89)';
-  ctx.fillRect(0, 0, width, height);
-  return then(width, height);
-}
-
-function resetESP370U(ctx: CanvasRenderingContext2D) {
-  clearESP370U(ctx, (width, height) => {
-    ctx.beginPath();
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 1;
-    ctx.moveTo(x(0), y(ESP370U.MAX_VALID_Y / ESP370U.MAX_Y * height + 5));
-    ctx.lineTo(x(width), y(ESP370U.MAX_VALID_Y / ESP370U.MAX_Y * height + 5));
-    ctx.moveTo(x(width / 2), y(ESP370U.MAX_VALID_Y / ESP370U.MAX_Y * height + 5));
-    ctx.lineTo(x(width / 2), y(height));
-    ctx.moveTo(x(0), y(ESP370U.MIN_VALID_Y / ESP370U.MAX_Y * height));
-    ctx.lineTo(x(width), y(ESP370U.MIN_VALID_Y / ESP370U.MAX_Y * height));
-    ctx.stroke();
-  
-    ctx.fillStyle = '#000';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.font = `300 ${(MAX_Y - MAX_VALID_Y) / MAX_Y * height / 1.3}px system-ui`;
-    ctx.fillText('重', 1 / 2 / 3 * width * 1, ((MAX_VALID_Y + MAX_Y) / 2 / MAX_Y * 1.015) * height);
-    ctx.fillText('签', 1 / 2 / 3 * width * 2, ((MAX_VALID_Y + MAX_Y) / 2 / MAX_Y * 1.015) * height);
-    ctx.fillText('确', 1 / 2 / 3 * width * 4, ((MAX_VALID_Y + MAX_Y) / 2 / MAX_Y * 1.015) * height);
-    ctx.fillText('认', 1 / 2 / 3 * width * 5, ((MAX_VALID_Y + MAX_Y) / 2 / MAX_Y * 1.015) * height);
-    ctx.fillText('请', 1 / 14 * width * 1, (MIN_VALID_Y / 2 / MAX_Y * 1.2) * height);
-    ctx.fillText('签', 1 / 14 * width * 2, (MIN_VALID_Y / 2 / MAX_Y * 1.2) * height);
-    ctx.fillText('名', 1 / 14 * width * 3, (MIN_VALID_Y / 2 / MAX_Y * 1.2) * height);
-    ctx.fillText('•', 1 / 14 * width * 4, (MIN_VALID_Y / 2 / MAX_Y * 1.2) * height);
-    ctx.fillText('•', 1 / 14 * width * 5, (MIN_VALID_Y / 2 / MAX_Y * 1.2) * height);
-    ctx.fillText('•', 1 / 14 * width * 6, (MIN_VALID_Y / 2 / MAX_Y * 1.2) * height);
-    ctx.fillText('•', 1 / 14 * width * 7, (MIN_VALID_Y / 2 / MAX_Y * 1.2) * height);
-    ctx.fillText('•', 1 / 14 * width * 8, (MIN_VALID_Y / 2 / MAX_Y * 1.2) * height);
-    ctx.fillText('•', 1 / 14 * width * 9, (MIN_VALID_Y / 2 / MAX_Y * 1.2) * height);
-  });
-}
-
 function guide(ctx: CanvasRenderingContext2D, ...contents: string[]) {
-  return clearESP370U(ctx, (width, height) => {
-    const fontSize = 20;
-    const lineHeight = fontSize * 1.6;
-    const offsetY = -1 * (contents.length - 1) * lineHeight / 2;
-    ctx.fillStyle = '#000';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.font = `300 ${fontSize}px system-ui`;
-    contents.forEach((line, i) => {
-      ctx.fillText(line, width / 2, height / 2 + offsetY + lineHeight * i);
-    });
+  const { width, height } = ctx.canvas;
+  ctx.clearRect(0, 0, width, height);
+
+  const fontSize = 20;
+  const lineHeight = fontSize * 1.6;
+  const offsetY = -1 * (contents.length - 1) * lineHeight / 2;
+  ctx.fillStyle = '#000';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `300 ${fontSize}px system-ui`;
+  contents.forEach((line, i) => {
+    ctx.fillText(line, width / 2, height / 2 + offsetY + lineHeight * i);
   });
 }
 
@@ -74,49 +67,115 @@ interface IOptions {
   onConfirm?: (blob: Blob) => void;
   unsupportedWebHIDAPI: string[];
   unconnectedDevice: string[];
+  background?: boolean | string | CanvasGradient | CanvasPattern;
+  ui?: boolean;
 }
 
 export async function emulate(canvas: HTMLCanvasElement, options: IOptions) {
+  const { background = true, ui = background } = options;
   const { devicePixelRatio: dpr } = window;
-  const { width, height } = canvas.getBoundingClientRect();
-  canvas.width = width * dpr;
-  canvas.height = height * dpr;
+  const rect = canvas.getBoundingClientRect();
 
-  const ctx = canvas.getContext('2d');
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  const ctx = canvas.getContext('2d')!;
   if (!ctx) throw new Error('Connot get CanvasRenderingContext2D!');
 
-  const bgCanvas = document.createElement('canvas');
-  bgCanvas.width = canvas.width;
-  bgCanvas.height = canvas.height;
-  const bgCtx = bgCanvas.getContext('2d')!;
+  // Force contents to fit display ratio
+  const rectRatio = rect.width / rect.height;
+  const displayRatio = displayResolution[0] / displayResolution[1];
+  const [width, height] = displayRatio > rectRatio ?
+    [rect.width * dpr, rect.width * dpr / displayRatio] :
+    [rect.height * dpr * displayRatio, rect.height * dpr];
 
-  const signCanvas = document.createElement('canvas');
-  signCanvas.width = canvas.width;
-  signCanvas.height = canvas.height;
-  const signCtx = signCanvas.getContext('2d')!;
+  // Create Offscreen Canvases
+  const [bgLayer, bgCtx] = createOffscreenCanvas(width, height);
+  const [signLayer, signCtx] = createOffscreenCanvas(width, height);
+  const [workLayer, workCtx] = createOffscreenCanvas(width, height);
+  const [uiLayer, uiCtx] = createOffscreenCanvas(width, height);
 
-  (function animate() {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.drawImage(bgCanvas, 0, 0);
-    ctx.drawImage(signCanvas, 0, 0);
-    requestAnimationFrame(animate);
-  })();
+  // Vertical edges of working area
+  const minValidH = activeRatioY * height;
+  const maxValidH = (1 - activeRatioY) * height;
 
-  if (!('hid' in navigator)) return guide(bgCtx, ...options.unsupportedWebHIDAPI);
-
-  let device;
-  while (!device) {
-    const devices = await navigator.hid.getDevices();
-    device = devices.find(({ vendorId, productId }) => vendorId === ESP370U.VENDOR_ID && productId === ESP370U.PRODUCT_ID);
-    if (!device) {
-      guide(bgCtx, ...options.unconnectedDevice);
-      await new Promise((resolve) => canvas.addEventListener('click', resolve, { once: true }));
-      [device] = await navigator.hid.requestDevice({ filters: [{ vendorId: ESP370U.VENDOR_ID, productId: ESP370U.PRODUCT_ID }] });
-    }
+  if (background) {
+    const bgColor = typeof background === 'boolean' ? '#4f6559' : background;
+    bgCtx.fillStyle = bgColor;
+    bgCtx.fillRect(0, 0, width, height);
   }
 
-  const esp370u = new ESP370U(device);
+  if (ui) {
+    // Draw lines
+    uiCtx.strokeStyle = '#000';
+    uiCtx.lineWidth = Math.ceil(width / 660);
+    uiCtx.beginPath();
+    uiCtx.moveTo(x(0), y(minValidH));
+    uiCtx.lineTo(x(width), y(minValidH));
+    uiCtx.moveTo(x(0), y(maxValidH));
+    uiCtx.lineTo(x(width), y(maxValidH));
+    uiCtx.moveTo(x(width / 2), y(maxValidH));
+    uiCtx.lineTo(x(width / 2), y(height));
+    uiCtx.stroke();
+    uiCtx.closePath();
+    // Draw texts
+    uiCtx.fillStyle = '#000';
+    uiCtx.textAlign = 'center';
+    uiCtx.textBaseline = 'middle';
+    const fontSize = height * activeRatioY * 0.875;
+    uiCtx.font = `300 ${fontSize}px system-ui`;
+    const buttonBaseline = (1 - activeRatioY / 2) * height;
+    uiCtx.fillText('重', width * 1 / 6, buttonBaseline);
+    uiCtx.fillText('签', width * 2 / 6, buttonBaseline);
+    uiCtx.fillText('确', width * 4 / 6, buttonBaseline);
+    uiCtx.fillText('认', width * 5 / 6, buttonBaseline);
+    const titleBaseline = activeRatioY / 2 * height;
+    uiCtx.fillText('请', width * 1 / 14, titleBaseline);
+    uiCtx.fillText('签', width * 2 / 14, titleBaseline);
+    uiCtx.fillText('名', width * 3 / 14, titleBaseline);
+    uiCtx.fillText('•', width * 4 / 14, titleBaseline);
+    uiCtx.fillText('•', width * 5 / 14, titleBaseline);
+    uiCtx.fillText('•', width * 6 / 14, titleBaseline);
+    uiCtx.fillText('•', width * 7 / 14, titleBaseline);
+    uiCtx.fillText('•', width * 8 / 14, titleBaseline);
+    uiCtx.fillText('•', width * 9 / 14, titleBaseline);
+  }
 
+  let requestID = -1;
+
+  // React to sign layer changes
+  (function animate() {
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(bgLayer, 0, 0);
+    ctx.drawImage(signLayer, 0, 0);
+    requestID = requestAnimationFrame(animate);
+  })();
+
+  if (!('hid' in navigator)) return guide(signCtx, ...options.unsupportedWebHIDAPI);
+
+  // Wait util device are found and permissions are obtained
+  const device = await makesureDevice({ vendorId, productId }, (onClick) => {
+    guide(signCtx, ...options.unconnectedDevice);
+    canvas.addEventListener('click', onClick, { once: true });
+  });
+
+  cancelAnimationFrame(requestID);
+  signCtx.clearRect(0, 0, width, height);
+  // React to sign layer changes with ui layer on top
+  (function animate() {
+    // Cut sign layer into worklayer
+    workCtx.clearRect(0, 0, width, height);
+    workCtx.drawImage(signLayer, 0, 0);
+    workCtx.clearRect(0, 0, width, minValidH);
+    workCtx.clearRect(0, maxValidH, width, minValidH);
+    // Draw layers
+    ctx.clearRect(0, 0, width, height);
+    ctx.drawImage(bgLayer, 0, 0);
+    ctx.drawImage(workLayer, 0, 0);
+    ctx.drawImage(uiLayer, 0, 0);
+    requestID = requestAnimationFrame(animate);
+  })();
+
+  const esp370u = new ESP370U(device);
   const moves: number[] = [];
   const offs = [
     esp370u.on('handshake', async (e) => {
@@ -130,14 +189,13 @@ export async function emulate(canvas: HTMLCanvasElement, options: IOptions) {
     }),
     esp370u.on('resign', (e) => {
       e.print('设备主动重签');
-      signCtx.clearRect(0, 0, signCanvas.width, signCanvas.height);
+      signCtx.clearRect(0, 0, width, height);
     }),
     esp370u.on('confirm', (e) => {
       e.print('设备主动确认');
-      signCanvas.toBlob((blob) => {
-        signCtx.clearRect(0, 0, signCanvas.width, signCanvas.height);
+      signLayer.toBlob((blob) => {
+        signCtx.clearRect(0, 0, width, height);
         if (blob) {
-          // window.open(URL.createObjectURL(blob));
           options.onConfirm?.(blob);
           esp370u.send('close');
         }
@@ -171,7 +229,6 @@ export async function emulate(canvas: HTMLCanvasElement, options: IOptions) {
     }),
   ];
 
-  resetESP370U(bgCtx);
   await device.open();
   esp370u.send('init');
 }

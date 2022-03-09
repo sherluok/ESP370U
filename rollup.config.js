@@ -52,5 +52,25 @@ export default [
         },
       }),
     ],
-  }
+  },
+  {
+    input: 'src/index.ts',
+    output: {
+      file: 'docs/index.iife.js',
+      sourcemap: true,
+      name: 'esp370u',
+      format: 'iife',
+    },
+    plugins: [
+      terser(),
+      typescript({
+        tsconfig: './tsconfig.json',
+        compilerOptions: {
+          target: 'ES6',
+          declaration: false,
+          declarationDir: undefined,
+        },
+      }),
+    ],
+  },
 ];

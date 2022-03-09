@@ -5,6 +5,7 @@
     "lib": ["ESNext", "DOM"],
     "target": "ES2022",
     "module": "ESNext",
+    "types": ["w3c-web-hid"],
     "strict": true,
     "allowJs": false,
     "checkJs": false,
