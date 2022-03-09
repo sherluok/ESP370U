@@ -13,6 +13,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
+      gap: 20px;
       box-sizing: content-box;
       background: #ddd;
     }
@@ -34,15 +36,19 @@
       height: 165px;
       display: block;
     }
+    #try {
+      visibility: hidden;
+    }
   </style>
 </head>
 <body>
+  <button id="try">再试一试</button>
   <div class="device">
     <div class="display">
       <canvas id="canvas">您的浏览器不支持 Canvas，请联系客服升级。</canvas>
     </div>
   </div>
-  <script src="./index.iife.js"></script>
+  <script src="https://unpkg.com/esp370u@0.0.1/dist/index.iife.js"></script>
   <script src="./index.js"></script>
 </body>
 </html>
