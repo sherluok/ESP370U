@@ -38,8 +38,8 @@ or drictly using it without module system by adding the self excute script [inde
 
 ## Examples
 
-- Link: https://sherluok.github.io/ESP370U/
-- Code: ./docs/index.html
+- Demo: [sherluok.github.io/esp370u](https://sherluok.github.io/ESP370U/)
+- Code: [the demo folder](./docs/index.html)
 
 To get started quickly, you can use [emulate()](#emulate):
 
