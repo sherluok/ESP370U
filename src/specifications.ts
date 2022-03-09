@@ -57,7 +57,8 @@ export const commands = {
 export const events = {
   /** 设备握手成功 */
   handshake: [
-    [0x88, 0x00, 0x74, 0x00, 0x14, 0x65, 0x00],
+    // [0x88, 0x00, 0x74, 0x00, 0x14, 0x65, 0x00],
+    [0x88, 0x00, null, null, null, null, null],
   ],
   /** 连接已经建立 */
   initialize: [
@@ -66,6 +67,18 @@ export const events = {
   /** 主动重置成功 */
   reset: [
     [0x55, 0x05, 0x33, 0x70, 0xff, 0xff, 0xff],
+  ],
+  /** 重签按钮被按下 */
+  resign: [
+    [0x55, null, null, null, null, 0x00, 0x00],
+  ],
+  /** 确认按钮被按下 */
+  confirm: [
+    [0x55, null, null, null, null, 0x00, 0xff],
+  ],
+  /** 主动断开连接 */
+  finalize: [
+    [0x55, 0x05, 0x22, 0x70, 0xff, 0xff, 0xff],
   ],
   /** 抬起 */
   up: [
@@ -79,17 +92,5 @@ export const events = {
   move: [
     [0xa0, null, null, null, null, null, null],
     [0xa1, null, null, null, null, null, null],
-  ],
-  /** 重签按钮被按下 */
-  resign: [
-    [0x55, null, null, null, null, 0x00, 0x00],
-  ],
-  /** 确认按钮被按下 */
-  confirm: [
-    [0x55, null, null, null, null, 0x00, 0xff],
-  ],
-  /** 主动断开连接 */
-  finalize: [
-    [0x55, 0x05, 0x22, 0x70, 0xff, 0xff, 0xff],
   ],
 };

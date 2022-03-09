@@ -178,12 +178,18 @@ export async function emulate(canvas: HTMLCanvasElement, options: IOptions) {
   const esp370u = new ESP370U(device);
   const moves: number[] = [];
   const offs = [
+    esp370u.on('?', (e) => {
+      e.print('未知事件');
+    }),
     esp370u.on('handshake', async (e) => {
       e.print('握手成功');
-      esp370u.once('initialize').then((e) => {
+      esp370u.once('initialize', 1000).then((e) => {
         e.print('设备初始化成功');
       }).catch((err) => {
         console.error('设备无响应');
+      });
+      esp370u.on('finalize', (e) => {
+        e.print('设备断开连接');
       });
       esp370u.send('open');
     }),
