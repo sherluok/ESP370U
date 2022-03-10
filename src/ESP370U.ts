@@ -1,13 +1,20 @@
 import { EventEmitter } from './EventEmitter';
+import { makesureDevice } from './utils';
 import { InputReportData } from './InputReportData';
-import { commands, events, reportId } from './specifications';
+import { commands, events, productId, reportId, vendorId } from './specifications';
 
 type EventType = '*' | keyof typeof events | '?';
 type EventMap = Record<EventType, InputReportData>;
 
 export class ESP370U extends EventEmitter<EventMap> {
+  static async makesure(suspense: (onUserGesture: (teardownLogic: any) => void) => void) {
+    let device = await makesureDevice({ vendorId, productId }, suspense);
+    return new ESP370U(device);
+  }
+
   constructor(public device: HIDDevice) {
     super();
+    console.log(device);
     this.device.addEventListener('inputreport', this.onInputReport);
   }
 
@@ -30,6 +37,11 @@ export class ESP370U extends EventEmitter<EventMap> {
       }
       await this.emit('?', input);
     }
+  }
+
+  async open() {
+    await this.device.open();
+    this.send('init');
   }
 
   async send(command: keyof typeof commands | Iterable<number>) {

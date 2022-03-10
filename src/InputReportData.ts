@@ -16,8 +16,9 @@ export class InputReportData extends DataView {
   }
 
   print(label: string) {
+    const style = 'background:rgb(0,112,245); color:#fff; padding:2px .5em 1px .5em; border-radius:4px;';
     const uint8s = new Uint8Array(this.buffer, this.byteOffset, this.byteLength);
-    const hexStr = [...uint8s].map((uint8) => uint8.toString(16).padStart(2, '0'));
-    console.log('[%s]', label, ...hexStr);
+    const hexStrs = [...uint8s].map((uint8) => uint8.toString(16).padStart(2, '0'));
+    console.log('%c%s', style, hexStrs.join(' ').toUpperCase(), label);
   }
 }

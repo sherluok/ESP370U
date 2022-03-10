@@ -163,12 +163,10 @@ export function emulate(canvas: HTMLCanvasElement, options: IOptions) {
     if (!('hid' in navigator)) return guide(signCtx, ...options.unsupportedWebHIDAPI);
 
     // Wait util device are found and permissions are obtained
-    device = await makesureDevice({ vendorId, productId }, (onClick) => {
+    esp370u = await ESP370U.makesure((onClick) => {
       guide(signCtx, ...options.unconnectedDevice);
       canvas.addEventListener('click', onClick, { once: true });
     });
-
-    esp370u = new ESP370U(device);
 
     cancelAnimationFrame(requestID);
     signCtx.clearRect(0, 0, width, height);
@@ -245,8 +243,7 @@ export function emulate(canvas: HTMLCanvasElement, options: IOptions) {
       }),
     ];
 
-    await device.open();
-    esp370u.send('init');
+    await esp370u.open();
   })();
 
   return teardown;

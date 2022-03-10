@@ -140,9 +140,9 @@ A [DataView]() containing the [data](https://developer.mozilla.org/en-US/docs/We
 esp370u.on('*', (e) => {
   const [command, x, y, z] = [
     e.getUint8(0),
-    e.getUint32(1),
-    e.getUint32(3),
-    e.getUint32(5),
+    e.getUint16(1, true),
+    e.getUint16(3, true),
+    e.getUint16(5, true),
   ];
 });
 ```
@@ -166,7 +166,7 @@ Object containing stylus's normalized coordinates and pressure data.
 **Float** between `0 ~ 1.0` meaning:
 
 ```ts
-const x = e.getUint32(1) / ESP370U.MAX_X;
+const x = e.getUint16(1) / ESP370U.MAX_X;
 ```
 
 ### `y`
@@ -174,7 +174,7 @@ const x = e.getUint32(1) / ESP370U.MAX_X;
 **Float** between `0 ~ 1.0` meaning:
 
 ```ts
-const y = e.getUint32(3) / ESP370U.MAX_Y;
+const y = e.getUint16(3) / ESP370U.MAX_Y;
 ```
 
 ### `z`
@@ -182,7 +182,7 @@ const y = e.getUint32(3) / ESP370U.MAX_Y;
 **Float** between `0 ~ 1.0` meaning:
 
 ```ts
-const z = e.getUint32(5) / ESP370U.MAX_Z;
+const z = e.getUint16(5) / ESP370U.MAX_Z;
 ```
 
 ## TimeoutError
