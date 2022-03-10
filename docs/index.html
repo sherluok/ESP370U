@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESP370U Demo</title>
+  <style>
+    body {
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+      box-sizing: content-box;
+      background: #ddd;
+    }
+    .device {
+      max-width: max-content;
+      max-height: max-content;
+      background: #333;
+      border-radius: 32px;
+      padding: 150px 55px 330px 55px;
+    }
+    .display {
+      border-radius: 6px;
+      border-color: #111;
+      border-style: solid;
+      border-width: 15px 40px 15px 40px;
+    }
+    #canvas {
+      width: 330px;
+      height: 165px;
+      display: block;
+    }
+    #try {
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body>
+  <button id="try">再试一试</button>
+  <div class="device">
+    <div class="display">
+      <canvas id="canvas">您的浏览器不支持 Canvas，请联系客服升级。</canvas>
+    </div>
+  </div>
+  <!-- <script src="../dist/index.iife.js"></script> -->
+  <script src="https://unpkg.com/esp370u@0.0.2/dist/index.iife.js"></script>
+  <script src="./index.js"></script>
+</body>
+</html>
