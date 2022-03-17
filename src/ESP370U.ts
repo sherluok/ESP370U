@@ -18,8 +18,12 @@ export class ESP370U extends EventEmitter<EventMap> {
     this.device.addEventListener('inputreport', this.onInputReport);
   }
 
-  destroy() {
+  async destroy() {
     this.device.removeEventListener('inputreport', this.onInputReport);
+    if (this.device.opened) {
+      await this.send('close');
+      await this.device.close();
+    }
   }
 
   private onInputReport = async (e: HIDInputReportEvent) => {
@@ -40,7 +44,9 @@ export class ESP370U extends EventEmitter<EventMap> {
   }
 
   async open() {
-    await this.device.open();
+    if (!this.device.opened) {
+      await this.device.open();
+    }
     this.send('init');
   }
 

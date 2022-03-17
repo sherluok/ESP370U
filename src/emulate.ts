@@ -72,15 +72,18 @@ interface IOptions {
 }
 
 export function emulate(canvas: HTMLCanvasElement, options: IOptions) {
-  let device: HIDDevice;
   let esp370u: ESP370U;
   let requestID = -1;
+  let offs: (() => void)[];
+  let destroied = false;
 
   const teardown = async () => {
-    cancelAnimationFrame(requestID);
-    await esp370u?.send('close');
-    await esp370u?.destroy();
-    await device?.close();
+    if (!destroied) {
+      destroied = true;
+      cancelAnimationFrame(requestID);
+      await esp370u?.destroy();
+      offs.forEach((off) => off());
+    }
   };
 
   (async () => {
@@ -186,7 +189,7 @@ export function emulate(canvas: HTMLCanvasElement, options: IOptions) {
     })();
 
     const moves: number[] = [];
-    const offs = [
+    offs = [
       esp370u.on('?', (e) => {
         e.print('未知事件');
       }),

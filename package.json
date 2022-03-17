@@ -1,6 +1,6 @@
 {
   "name": "esp370u",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Javascript library for Hanvon ESP370U E-signature display based on WebHID API",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
